@@ -198,6 +198,45 @@
   .status-approved { background: var(--green-light); color: var(--green); }
   .status-rejected { background: var(--red-light); color: var(--red); }
 
+  /* ADMIN PAGE */
+  .admin-page { max-width: 900px; margin: 0 auto; padding: 40px 20px 60px; }
+  .admin-page h1 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+  .admin-page > p { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+  .admin-tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--border); }
+  .admin-tab { font-size: 13px; padding: 8px 16px; border: none; background: none; cursor: pointer; color: var(--text2); font-family: inherit; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+  .admin-tab.active { color: var(--green); border-bottom-color: var(--green); font-weight: 500; }
+  .admin-section { display: none; }
+  .admin-section.active { display: block; }
+  .admin-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .admin-stat { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: center; box-shadow: var(--shadow); }
+  .admin-stat-num { font-size: 28px; font-weight: 600; }
+  .admin-stat-num.green { color: var(--green); }
+  .admin-stat-num.red { color: var(--red); }
+  .admin-stat-num.orange { color: #d97706; }
+  .admin-stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+  .admin-app-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
+  .admin-app-top { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 12px; }
+  .admin-app-icon { width: 48px; height: 48px; border-radius: 10px; background: var(--bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; overflow: hidden; }
+  .admin-app-icon img { width: 100%; height: 100%; object-fit: cover; }
+  .admin-app-info { flex: 1; }
+  .admin-app-info h3 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .admin-app-info p { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .admin-app-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+  .admin-app-body { font-size: 13px; color: var(--text2); margin-bottom: 12px; line-height: 1.5; background: var(--bg); padding: 10px 12px; border-radius: var(--radius-sm); }
+  .admin-app-links { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .admin-link { font-size: 12px; color: var(--green); text-decoration: none; background: var(--green-light); padding: 4px 10px; border-radius: 20px; }
+  .admin-actions { display: flex; gap: 8px; justify-content: flex-end; }
+  .btn-approve { font-size: 13px; padding: 7px 18px; border: none; border-radius: var(--radius-sm); background: var(--green); color: #fff; cursor: pointer; font-family: inherit; font-weight: 500; transition: opacity 0.15s; }
+  .btn-approve:hover { opacity: 0.9; }
+  .btn-reject { font-size: 13px; padding: 7px 18px; border: none; border-radius: var(--radius-sm); background: var(--red); color: #fff; cursor: pointer; font-family: inherit; font-weight: 500; transition: opacity 0.15s; }
+  .btn-reject:hover { opacity: 0.9; }
+  .btn-delete { font-size: 13px; padding: 7px 18px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--text2); cursor: pointer; font-family: inherit; transition: background 0.15s; }
+  .btn-delete:hover { background: var(--red-light); color: var(--red); border-color: var(--red); }
+  .admin-access-denied { text-align: center; padding: 60px 20px; }
+  .admin-access-denied .icon { font-size: 48px; margin-bottom: 16px; }
+  .admin-access-denied h2 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+  .admin-access-denied p { font-size: 14px; color: var(--text2); }
+
   /* FOOTER */
   footer { border-top: 1px solid var(--border); padding: 24px 20px; text-align: center; font-size: 12px; color: var(--text3); }
   footer a { color: var(--green); text-decoration: none; }
@@ -229,6 +268,7 @@
       <a href="#" onclick="showPage('home')" id="nav-home" class="active">Apps</a>
       <a href="#" onclick="showPage('submit')" id="nav-submit">Submit App</a>
       <a href="#" onclick="showPage('developer')" id="nav-dev">Developer</a>
+      <a href="#" onclick="showPage('admin')" id="nav-admin" style="display:none">Admin ⚙️</a>
     </div>
     <div class="nav-right">
       <button class="btn-ghost" onclick="showPage('developer')" id="loginBtn">Login</button>
@@ -483,6 +523,45 @@
   </div>
 </div>
 
+<!-- ADMIN PAGE -->
+<div id="page-admin" class="page">
+  <div class="admin-page">
+    <h1>⚙️ Admin Panel</h1>
+    <p>Pending apps review করো এবং approved apps manage করো।</p>
+
+    <div id="adminAccessDenied" class="admin-access-denied" style="display:none">
+      <div class="icon">🔒</div>
+      <h2>Access Denied</h2>
+      <p>শুধু admin এই page দেখতে পারবে।</p>
+    </div>
+
+    <div id="adminContent" style="display:none">
+      <div class="admin-stats">
+        <div class="admin-stat"><div class="admin-stat-num orange" id="as-pending">0</div><div class="admin-stat-label">Pending</div></div>
+        <div class="admin-stat"><div class="admin-stat-num green" id="as-approved">0</div><div class="admin-stat-label">Approved</div></div>
+        <div class="admin-stat"><div class="admin-stat-num red" id="as-rejected">0</div><div class="admin-stat-label">Rejected</div></div>
+        <div class="admin-stat"><div class="admin-stat-num" id="as-total">0</div><div class="admin-stat-label">Total</div></div>
+      </div>
+
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchAdminTab('pending', this)">⏳ Pending</button>
+        <button class="admin-tab" onclick="switchAdminTab('approved', this)">✅ Approved</button>
+        <button class="admin-tab" onclick="switchAdminTab('rejected', this)">❌ Rejected</button>
+      </div>
+
+      <div id="admin-pending" class="admin-section active">
+        <div id="pendingList"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+      </div>
+      <div id="admin-approved" class="admin-section">
+        <div id="approvedList"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+      </div>
+      <div id="admin-rejected" class="admin-section">
+        <div id="rejectedList"><div class="loading"><div class="spinner"></div>Loading...</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer>
   <p>© 2026 AmarBazarBD · Made with ❤️ in Bangladesh · <a href="https://rosterkabir.wordpress.com" target="_blank">A Kabir</a></p>
 </footer>
@@ -504,6 +583,8 @@
     appId: "1:807139822675:web:0e8c5a93b1f60433e18aa6"
   };
 
+  const ADMIN_EMAIL = 'mdahasanulkabirrakib@gmail.com';
+
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
   const auth = getAuth(app);
@@ -520,10 +601,15 @@
       document.getElementById('devDashboard').style.display = 'block';
       document.getElementById('devWelcome').textContent = `My Apps (${user.email})`;
       loadDevApps(user.uid);
+      // Show admin nav if admin
+      if (user.email === ADMIN_EMAIL) {
+        document.getElementById('nav-admin').style.display = 'inline';
+      }
     } else {
       document.getElementById('loginBtn').textContent = 'Login';
       document.getElementById('devLoginSection').style.display = 'block';
       document.getElementById('devDashboard').style.display = 'none';
+      document.getElementById('nav-admin').style.display = 'none';
     }
   });
 
@@ -645,6 +731,77 @@
     await updateDoc(doc(window._db, 'apps', appId), { downloads: increment(1) });
   };
 
+  // Admin functions
+  window.loadAdminApps = async function() {
+    try {
+      const snap = await getDocs(collection(window._db, 'apps'));
+      const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const pending = all.filter(a => a.status === 'pending');
+      const approved = all.filter(a => a.status === 'approved');
+      const rejected = all.filter(a => a.status === 'rejected');
+
+      document.getElementById('as-pending').textContent = pending.length;
+      document.getElementById('as-approved').textContent = approved.length;
+      document.getElementById('as-rejected').textContent = rejected.length;
+      document.getElementById('as-total').textContent = all.length;
+
+      renderAdminList('pendingList', pending, 'pending');
+      renderAdminList('approvedList', approved, 'approved');
+      renderAdminList('rejectedList', rejected, 'rejected');
+    } catch(e) { console.error(e); }
+  };
+
+  function renderAdminList(elId, apps, type) {
+    const el = document.getElementById(elId);
+    if (!apps.length) { el.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><h3>No ${type} apps</h3></div>`; return; }
+    el.innerHTML = apps.map(a => `
+      <div class="admin-app-card" id="acard-${a.id}">
+        <div class="admin-app-top">
+          <div class="admin-app-icon">${a.iconUrl ? `<img src="${a.iconUrl}" onerror="this.outerHTML='📱'">` : '📱'}</div>
+          <div class="admin-app-info">
+            <h3>${escHtml(a.name)}</h3>
+            <p>By <strong>${escHtml(a.devName)}</strong>${a.devStudio ? ' · ' + escHtml(a.devStudio) : ''} · ${escHtml(a.devEmail)}</p>
+            <div class="admin-app-meta">
+              <span class="badge badge-green">${escHtml(a.category)}</span>
+              ${(a.platform||[]).map(p=>`<span class="badge badge-gray">${escHtml(p)}</span>`).join('')}
+              <span class="badge badge-blue">⬇ ${a.downloads||0} downloads</span>
+            </div>
+          </div>
+        </div>
+        <div class="admin-app-body">${escHtml(a.descEn || '')}${a.descBn ? '\n' + escHtml(a.descBn) : ''}</div>
+        <div class="admin-app-links">
+          ${a.downloadLink ? `<a class="admin-link" href="${escAttr(a.downloadLink)}" target="_blank">🔗 Download Link</a>` : ''}
+          ${a.website ? `<a class="admin-link" href="${escAttr(a.website)}" target="_blank">🌐 Website</a>` : ''}
+        </div>
+        <div class="admin-actions">
+          ${type !== 'approved' ? `<button class="btn-approve" onclick="adminUpdateStatus('${a.id}','approved')">✅ Approve</button>` : ''}
+          ${type !== 'rejected' ? `<button class="btn-reject" onclick="adminUpdateStatus('${a.id}','rejected')">❌ Reject</button>` : ''}
+          <button class="btn-delete" onclick="adminDelete('${a.id}')">🗑 Delete</button>
+        </div>
+      </div>`).join('');
+  }
+
+  window.adminUpdateStatus = async function(id, status) {
+    try {
+      const { doc, updateDoc } = window._firebase;
+      await updateDoc(doc(window._db, 'apps', id), { status });
+      showToast(status === 'approved' ? '✅ App approved!' : '❌ App rejected');
+      loadAdminApps();
+      loadApps();
+    } catch(e) { showToast('❌ Error: ' + e.message); }
+  };
+
+  window.adminDelete = async function(id) {
+    if (!confirm('এই app permanently delete করবে?')) return;
+    try {
+      const { deleteDoc, doc } = await import("https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js");
+      await deleteDoc(doc(window._db, 'apps', id));
+      showToast('🗑 App deleted');
+      loadAdminApps();
+      loadApps();
+    } catch(e) { showToast('❌ Error: ' + e.message); }
+  };
+
   loadApps();
 </script>
 
@@ -652,12 +809,31 @@
   let currentCat = 'all';
   let currentSort = 'newest';
 
+  function switchAdminTab(tab, el) {
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('admin-' + tab).classList.add('active');
+  }
+
   function showPage(p) {
     document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
     document.getElementById('page-' + p).classList.add('active');
     document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-    const navEl = document.getElementById('nav-' + (p === 'home' ? 'home' : p === 'submit' ? 'submit' : 'dev'));
+    const navEl = document.getElementById('nav-' + (p === 'home' ? 'home' : p === 'submit' ? 'submit' : p === 'admin' ? 'admin' : 'dev'));
     if (navEl) navEl.classList.add('active');
+    // Load admin data when admin page opens
+    if (p === 'admin') {
+      const user = window._auth?.currentUser;
+      if (user && user.email === 'mdahasanulkabirrakib@gmail.com') {
+        document.getElementById('adminAccessDenied').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+        window.loadAdminApps && window.loadAdminApps();
+      } else {
+        document.getElementById('adminAccessDenied').style.display = 'block';
+        document.getElementById('adminContent').style.display = 'none';
+      }
+    }
     window.scrollTo(0, 0);
     return false;
   }
