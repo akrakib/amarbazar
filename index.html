@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AmarBazarBD — Bangladesh App Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Siyam+Rupali&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #006a4e;
+    --green-light: #e6f3ef;
+    --red: #c8102e;
+    --red-light: #fceaed;
+    --bg: #f9fafb;
+    --bg2: #ffffff;
+    --border: #e5e7eb;
+    --text: #111827;
+    --text2: #6b7280;
+    --text3: #9ca3af;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .bn { font-family: 'Siyam Rupali', sans-serif; }
+
+  /* NAVBAR */
+  .nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 20px; height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-icon { width: 34px; height: 34px; background: var(--red); border-radius: 9px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon svg { width: 18px; height: 18px; fill: #fff; }
+  .logo-text { font-size: 17px; font-weight: 600; color: var(--text); }
+  .logo-text span { color: var(--green); }
+  .nav-links { display: flex; align-items: center; gap: 4px; }
+  .nav-links a { font-size: 13px; color: var(--text2); padding: 6px 10px; border-radius: var(--radius-sm); text-decoration: none; transition: background 0.15s, color 0.15s; }
+  .nav-links a:hover { background: var(--bg); color: var(--text); }
+  .nav-links a.active { color: var(--green); font-weight: 500; }
+  .nav-right { display: flex; align-items: center; gap: 8px; }
+  .btn-ghost { font-size: 13px; padding: 7px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; transition: background 0.15s; font-family: inherit; }
+  .btn-ghost:hover { background: var(--bg); }
+  .btn-primary { font-size: 13px; padding: 7px 16px; border-radius: var(--radius-sm); border: none; background: var(--green); color: #fff; cursor: pointer; transition: opacity 0.15s; font-family: inherit; font-weight: 500; }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-red { background: var(--red); }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* HERO */
+  .hero { background: linear-gradient(135deg, #006a4e08 0%, #c8102e06 100%); border-bottom: 1px solid var(--border); padding: 60px 20px 50px; text-align: center; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--green); color: var(--green); margin-bottom: 18px; font-weight: 500; }
+  .hero h1 { font-size: 38px; font-weight: 600; line-height: 1.2; margin-bottom: 12px; }
+  .hero h1 em { font-style: normal; color: var(--red); }
+  .hero p { font-size: 15px; color: var(--text2); margin-bottom: 28px; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .search-bar { display: flex; gap: 8px; max-width: 460px; margin: 0 auto; }
+  .search-bar input { flex: 1; font-size: 14px; padding: 11px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--text); font-family: inherit; outline: none; box-shadow: var(--shadow); }
+  .search-bar input:focus { border-color: var(--green); }
+  .search-bar button { padding: 11px 18px; background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: 14px; font-family: inherit; font-weight: 500; }
+
+  /* STATS */
+  .stats-row { max-width: 1100px; margin: 0 auto; padding: 28px 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .stat-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow); }
+  .stat-icon { width: 40px; height: 40px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; }
+  .stat-icon.g { background: var(--green-light); }
+  .stat-icon.r { background: var(--red-light); }
+  .stat-icon svg { width: 20px; height: 20px; }
+  .stat-num { font-size: 22px; font-weight: 600; color: var(--text); line-height: 1; }
+  .stat-label { font-size: 12px; color: var(--text2); margin-top: 3px; }
+
+  /* MAIN LAYOUT */
+  .main { max-width: 1100px; margin: 0 auto; padding: 0 20px 60px; display: grid; grid-template-columns: 220px 1fr; gap: 24px; }
+
+  /* SIDEBAR */
+  .sidebar { padding-top: 24px; }
+  .sidebar-title { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; padding: 0 8px; }
+  .cat-list { list-style: none; }
+  .cat-list li a { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-radius: var(--radius-sm); font-size: 13px; color: var(--text2); text-decoration: none; transition: background 0.15s, color 0.15s; cursor: pointer; }
+  .cat-list li a:hover { background: var(--bg); color: var(--text); }
+  .cat-list li a.active { background: var(--green-light); color: var(--green); font-weight: 500; }
+  .cat-list li a .cat-icon { margin-right: 8px; font-size: 15px; }
+  .cat-count { font-size: 11px; background: var(--bg); padding: 1px 6px; border-radius: 10px; color: var(--text3); }
+
+  /* CONTENT AREA */
+  .content { padding-top: 24px; }
+  .content-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .content-header h2 { font-size: 16px; font-weight: 600; }
+  .sort-select { font-size: 13px; padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--text); font-family: inherit; cursor: pointer; outline: none; }
+
+  /* APP GRID */
+  .app-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .app-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); transition: box-shadow 0.15s, transform 0.15s; cursor: pointer; }
+  .app-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .app-card-top { display: flex; gap: 12px; margin-bottom: 10px; }
+  .app-icon { width: 52px; height: 52px; border-radius: 12px; overflow: hidden; flex-shrink: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 24px; border: 1px solid var(--border); }
+  .app-icon img { width: 100%; height: 100%; object-fit: cover; }
+  .app-info { flex: 1; min-width: 0; }
+  .app-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .app-dev { font-size: 12px; color: var(--text2); }
+  .app-badges { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
+  .badge { font-size: 10px; padding: 2px 7px; border-radius: 20px; font-weight: 500; }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-blue { background: #e8f0fe; color: #1a56db; }
+  .badge-gray { background: var(--bg); color: var(--text2); border: 1px solid var(--border); }
+  .app-desc { font-size: 12px; color: var(--text2); line-height: 1.5; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .app-footer { display: flex; align-items: center; justify-content: space-between; }
+  .app-rating { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text2); }
+  .stars { color: #f59e0b; font-size: 12px; }
+  .app-dl-btn { font-size: 12px; padding: 6px 14px; border-radius: var(--radius-sm); background: var(--green); color: #fff; border: none; cursor: pointer; font-family: inherit; font-weight: 500; display: flex; align-items: center; gap: 5px; transition: opacity 0.15s; }
+  .app-dl-btn:hover { opacity: 0.9; }
+
+  /* LOADING & EMPTY */
+  .loading { text-align: center; padding: 60px 20px; color: var(--text2); font-size: 14px; }
+  .spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .empty { text-align: center; padding: 60px 20px; }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty h3 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .empty p { font-size: 13px; color: var(--text2); }
+
+  /* SUBMIT PAGE */
+  .submit-page { max-width: 700px; margin: 0 auto; padding: 40px 20px 60px; }
+  .submit-page h1 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+  .submit-page > p { font-size: 14px; color: var(--text2); margin-bottom: 32px; }
+  .form-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .form-section-title { font-size: 14px; font-weight: 600; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; color: var(--green); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form-field { margin-bottom: 16px; }
+  .form-label { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 5px; display: block; }
+  .form-label .req { color: var(--red); }
+  .form-input { width: 100%; font-size: 13px; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--text); font-family: inherit; outline: none; transition: border-color 0.15s; }
+  .form-input:focus { border-color: var(--green); }
+  .form-textarea { width: 100%; font-size: 13px; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--text); font-family: inherit; outline: none; resize: vertical; min-height: 90px; transition: border-color 0.15s; }
+  .form-textarea:focus { border-color: var(--green); }
+  .form-select { width: 100%; font-size: 13px; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: #fff; color: var(--text); font-family: inherit; outline: none; cursor: pointer; }
+  .platform-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .plat-btn { font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: #fff; color: var(--text2); cursor: pointer; transition: all 0.15s; font-family: inherit; }
+  .plat-btn.selected { background: var(--green); color: #fff; border-color: var(--green); }
+  .link-type-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+  .link-type-btn { font-size: 12px; padding: 8px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: #fff; color: var(--text2); cursor: pointer; transition: all 0.15s; font-family: inherit; text-align: center; }
+  .link-type-btn.selected { background: var(--green-light); color: var(--green); border-color: var(--green); }
+  .agree-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; }
+  .agree-row input { margin-top: 2px; accent-color: var(--green); width: 14px; height: 14px; flex-shrink: 0; cursor: pointer; }
+  .agree-row label { font-size: 12px; color: var(--text2); line-height: 1.5; cursor: pointer; }
+  .form-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .submit-success { text-align: center; padding: 60px 20px; }
+  .submit-success .icon { font-size: 48px; margin-bottom: 16px; }
+  .submit-success h2 { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+  .submit-success p { font-size: 14px; color: var(--text2); }
+
+  /* APP DETAIL MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: #fff; border-radius: 16px; width: 100%; max-width: 560px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2); transform: scale(0.96); transition: transform 0.2s; }
+  .modal-overlay.open .modal { transform: scale(1); }
+  .modal-header { padding: 24px 24px 0; display: flex; gap: 16px; align-items: flex-start; }
+  .modal-icon { width: 72px; height: 72px; border-radius: 16px; overflow: hidden; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0; border: 1px solid var(--border); }
+  .modal-icon img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+  .modal-dev { font-size: 13px; color: var(--text2); margin-bottom: 8px; }
+  .modal-body { padding: 16px 24px 24px; }
+  .modal-desc { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 20px; }
+  .modal-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .meta-item { background: var(--bg); border-radius: var(--radius-sm); padding: 10px; text-align: center; }
+  .meta-val { font-size: 14px; font-weight: 600; }
+  .meta-label { font-size: 11px; color: var(--text2); margin-top: 2px; }
+  .modal-close { position: absolute; top: 16px; right: 16px; width: 30px; height: 30px; background: var(--bg); border: none; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; color: var(--text2); }
+  .modal-actions { display: flex; gap: 10px; }
+  .modal-dl-btn { flex: 1; padding: 11px; background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 14px; font-family: inherit; font-weight: 500; cursor: pointer; transition: opacity 0.15s; }
+  .modal-dl-btn:hover { opacity: 0.9; }
+  .modal-dl-btn.red { background: var(--red); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 24px; right: 24px; background: #1f2937; color: #fff; font-size: 13px; padding: 10px 18px; border-radius: var(--radius-sm); box-shadow: var(--shadow-md); z-index: 999; transform: translateY(10px); opacity: 0; transition: all 0.25s; pointer-events: none; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* DEVELOPER PAGE */
+  .dev-page { max-width: 700px; margin: 0 auto; padding: 40px 20px 60px; }
+  .dev-page h1 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
+  .dev-page > p { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+  .dev-login-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); max-width: 400px; }
+  .dev-login-card h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .dev-login-card p { font-size: 13px; color: var(--text2); margin-bottom: 24px; }
+  .dev-apps-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .dev-apps-header h2 { font-size: 18px; font-weight: 600; }
+  .dev-app-row { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; display: flex; align-items: center; gap: 14px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  .dev-app-row .app-icon { width: 40px; height: 40px; border-radius: 9px; font-size: 18px; }
+  .dev-app-row-info { flex: 1; }
+  .dev-app-row-info h3 { font-size: 14px; font-weight: 500; }
+  .dev-app-row-info p { font-size: 12px; color: var(--text2); }
+  .status-badge { font-size: 11px; padding: 3px 9px; border-radius: 20px; font-weight: 500; }
+  .status-pending { background: #fef3c7; color: #92400e; }
+  .status-approved { background: var(--green-light); color: var(--green); }
+  .status-rejected { background: var(--red-light); color: var(--red); }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 24px 20px; text-align: center; font-size: 12px; color: var(--text3); }
+  footer a { color: var(--green); text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .stats-row { grid-template-columns: 1fr; }
+    .main { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .app-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 26px; }
+    .link-type-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="logo" href="#" onclick="showPage('home')">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M17 2H7C5.9 2 5 2.9 5 4v16c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 14c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/></svg>
+      </div>
+      <span class="logo-text"><span>আমার</span>BazarBD</span>
+    </a>
+    <div class="nav-links">
+      <a href="#" onclick="showPage('home')" id="nav-home" class="active">Apps</a>
+      <a href="#" onclick="showPage('submit')" id="nav-submit">Submit App</a>
+      <a href="#" onclick="showPage('developer')" id="nav-dev">Developer</a>
+    </div>
+    <div class="nav-right">
+      <button class="btn-ghost" onclick="showPage('developer')" id="loginBtn">Login</button>
+      <button class="btn-primary" onclick="showPage('submit')">Submit App</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-badge">🇧🇩 Bangladesh App Store</div>
+    <h1>Bangladesh-এর <em>সেরা Apps</em><br>এক জায়গায়</h1>
+    <p>Discover, download, and review the best Bangladeshi apps — free to explore.</p>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search apps... / অ্যাপ খুঁজুন" oninput="handleSearch(this.value)" />
+      <button onclick="handleSearch(document.getElementById('searchInput').value)">Search</button>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon g">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#006a4e" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18.01"/></svg>
+      </div>
+      <div>
+        <div class="stat-num" id="stat-apps">—</div>
+        <div class="stat-label">Apps Listed</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon r">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#c8102e" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      </div>
+      <div>
+        <div class="stat-num" id="stat-devs">—</div>
+        <div class="stat-label">Developers</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon g">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#006a4e" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </div>
+      <div>
+        <div class="stat-num" id="stat-downloads">—</div>
+        <div class="stat-label">Total Downloads</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <aside class="sidebar">
+      <div class="sidebar-title">Categories</div>
+      <ul class="cat-list" id="catList">
+        <li><a href="#" class="active" onclick="filterCat('all', this)"><span class="cat-icon">🏠</span> All Apps <span class="cat-count" id="cc-all">0</span></a></li>
+        <li><a href="#" onclick="filterCat('Education', this)"><span class="cat-icon">📚</span> Education <span class="cat-count" id="cc-Education">0</span></a></li>
+        <li><a href="#" onclick="filterCat('E-commerce', this)"><span class="cat-icon">🛒</span> E-commerce <span class="cat-count" id="cc-E-commerce">0</span></a></li>
+        <li><a href="#" onclick="filterCat('Finance', this)"><span class="cat-icon">💳</span> Finance <span class="cat-count" id="cc-Finance">0</span></a></li>
+        <li><a href="#" onclick="filterCat('Health', this)"><span class="cat-icon">❤️</span> Health <span class="cat-count" id="cc-Health">0</span></a></li>
+        <li><a href="#" onclick="filterCat('News', this)"><span class="cat-icon">📰</span> News <span class="cat-count" id="cc-News">0</span></a></li>
+        <li><a href="#" onclick="filterCat('Entertainment', this)"><span class="cat-icon">🎬</span> Entertainment <span class="cat-count" id="cc-Entertainment">0</span></a></li>
+        <li><a href="#" onclick="filterCat('Utility', this)"><span class="cat-icon">🔧</span> Utility <span class="cat-count" id="cc-Utility">0</span></a></li>
+        <li><a href="#" onclick="filterCat('Other', this)"><span class="cat-icon">📦</span> Other <span class="cat-count" id="cc-Other">0</span></a></li>
+      </ul>
+    </aside>
+
+    <div class="content">
+      <div class="content-header">
+        <h2 id="contentTitle">All Apps</h2>
+        <select class="sort-select" onchange="sortApps(this.value)">
+          <option value="newest">Newest First</option>
+          <option value="rating">Top Rated</option>
+          <option value="downloads">Most Downloaded</option>
+          <option value="name">A–Z</option>
+        </select>
+      </div>
+      <div id="appGrid" class="app-grid">
+        <div class="loading"><div class="spinner"></div>Loading apps...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SUBMIT PAGE -->
+<div id="page-submit" class="page">
+  <div class="submit-page">
+    <h1>Submit Your App</h1>
+    <p>তোমার app লক্ষ Bangladeshi user-দের কাছে পৌঁছে দাও — সম্পূর্ণ বিনামূল্যে।</p>
+
+    <div id="submitForm">
+      <div class="form-card">
+        <div class="form-section-title">👤 Developer Info</div>
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label">Your name <span class="req">*</span></label>
+            <input class="form-input" id="devName" placeholder="Md. Rakib" />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Email <span class="req">*</span></label>
+            <input class="form-input" id="devEmail" type="email" placeholder="you@example.com" />
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Developer / Studio name</label>
+          <input class="form-input" id="devStudio" placeholder="DevStudio BD" />
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-section-title">📱 App Details</div>
+        <div class="form-row">
+          <div class="form-field">
+            <label class="form-label">App name <span class="req">*</span></label>
+            <input class="form-input" id="appName" placeholder="e.g. ShikhoBD" />
+          </div>
+          <div class="form-field">
+            <label class="form-label">Category <span class="req">*</span></label>
+            <select class="form-select" id="appCategory">
+              <option value="">Select...</option>
+              <option>Education</option>
+              <option>E-commerce</option>
+              <option>Finance</option>
+              <option>Health</option>
+              <option>News</option>
+              <option>Entertainment</option>
+              <option>Utility</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Short description (English) <span class="req">*</span></label>
+          <input class="form-input" id="appDescEn" placeholder="What does your app do?" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">বিবরণ (বাংলা)</label>
+          <textarea class="form-textarea" id="appDescBn" placeholder="অ্যাপটি সম্পর্কে বাংলায় লিখুন..."></textarea>
+        </div>
+        <div class="form-field">
+          <label class="form-label">Platform <span class="req">*</span></label>
+          <div class="platform-btns" id="platformBtns">
+            <button class="plat-btn" onclick="togglePlatform(this)">📱 Android</button>
+            <button class="plat-btn" onclick="togglePlatform(this)">🍎 iOS</button>
+            <button class="plat-btn" onclick="togglePlatform(this)">🌐 Web App</button>
+            <button class="plat-btn" onclick="togglePlatform(this)">🖥️ Windows</button>
+          </div>
+        </div>
+        <div class="form-field">
+          <label class="form-label">App icon URL (Google Drive / Imgur link)</label>
+          <input class="form-input" id="appIcon" placeholder="https://drive.google.com/..." />
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-section-title">🔗 Download Links</div>
+        <p style="font-size:12px;color:var(--text2);margin-bottom:14px;">যেকোনো একটা বা একাধিক link দিন।</p>
+        <div class="link-type-row">
+          <button class="link-type-btn selected" id="lt-play" onclick="selectLinkType('play')">🟢 Google Play</button>
+          <button class="link-type-btn" id="lt-drive" onclick="selectLinkType('drive')">📁 Google Drive</button>
+          <button class="link-type-btn" id="lt-manual" onclick="selectLinkType('manual')">📤 Direct Link</button>
+        </div>
+        <div class="form-field">
+          <label class="form-label" id="linkLabel">Google Play Store URL</label>
+          <input class="form-input" id="appLink" placeholder="https://play.google.com/store/apps/details?id=..." />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Website (optional)</label>
+          <input class="form-input" id="appWebsite" placeholder="https://yourapp.com" />
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="agree-row">
+          <input type="checkbox" id="agreeCheck" />
+          <label for="agreeCheck">আমি AmarBazarBD-এর নিয়ম মেনে চলব। এই app-এ কোনো ক্ষতিকর বা illegal content নেই।</label>
+        </div>
+        <div class="form-actions">
+          <button class="btn-ghost" onclick="showPage('home')">Cancel</button>
+          <button class="btn-primary" onclick="submitApp()">Submit App →</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="submitSuccess" style="display:none" class="submit-success">
+      <div class="icon">✅</div>
+      <h2>App submitted successfully!</h2>
+      <p>আমরা ২৪–৪৮ ঘণ্টার মধ্যে review করব এবং email এ জানাব।<br>ধন্যবাদ AmarBazarBD-এ submit করার জন্য!</p>
+      <br>
+      <button class="btn-primary" onclick="showPage('home')" style="margin:0 auto;display:block">Browse Apps</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEVELOPER PAGE -->
+<div id="page-developer" class="page">
+  <div class="dev-page">
+    <h1>Developer Portal</h1>
+    <p>তোমার submitted apps manage করো।</p>
+
+    <div id="devLoginSection">
+      <div class="dev-login-card">
+        <h2>Login</h2>
+        <p>Email ও password দিয়ে login করো।</p>
+        <div class="form-field">
+          <label class="form-label">Email</label>
+          <input class="form-input" id="loginEmail" type="email" placeholder="you@example.com" />
+        </div>
+        <div class="form-field">
+          <label class="form-label">Password</label>
+          <input class="form-input" id="loginPassword" type="password" placeholder="••••••••" />
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="btn-primary" style="flex:1" onclick="loginDev()">Login</button>
+          <button class="btn-ghost" style="flex:1" onclick="registerDev()">Register</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="devDashboard" style="display:none">
+      <div class="dev-apps-header">
+        <h2 id="devWelcome">My Apps</h2>
+        <button class="btn-ghost" onclick="logoutDev()">Logout</button>
+      </div>
+      <div id="devAppList">
+        <div class="loading"><div class="spinner"></div>Loading...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP DETAIL MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="appModal">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <div class="modal-header">
+      <div class="modal-icon" id="modalIcon">📱</div>
+      <div>
+        <div class="modal-title" id="modalName"></div>
+        <div class="modal-dev" id="modalDev"></div>
+        <div id="modalBadges"></div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="modal-meta">
+        <div class="meta-item"><div class="meta-val" id="modalRating">—</div><div class="meta-label">Rating</div></div>
+        <div class="meta-item"><div class="meta-val" id="modalDownloads">—</div><div class="meta-label">Downloads</div></div>
+        <div class="meta-item"><div class="meta-val" id="modalCat">—</div><div class="meta-label">Category</div></div>
+      </div>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 AmarBazarBD · Made with ❤️ in Bangladesh · <a href="https://rosterkabir.wordpress.com" target="_blank">A Kabir</a></p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA5GhJONUHvSFsG6wZVHLHVs5ldCigCuYQ",
+    authDomain: "amarbazarbd-d73c0.firebaseapp.com",
+    projectId: "amarbazarbd-d73c0",
+    storageBucket: "amarbazarbd-d73c0.firebasestorage.app",
+    messagingSenderId: "807139822675",
+    appId: "1:807139822675:web:0e8c5a93b1f60433e18aa6"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  window._db = db;
+  window._auth = auth;
+  window._firebase = { collection, addDoc, getDocs, query, where, orderBy, serverTimestamp, doc, updateDoc, increment, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged };
+
+  // Auth state
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      document.getElementById('loginBtn').textContent = 'Dashboard';
+      document.getElementById('devLoginSection').style.display = 'none';
+      document.getElementById('devDashboard').style.display = 'block';
+      document.getElementById('devWelcome').textContent = `My Apps (${user.email})`;
+      loadDevApps(user.uid);
+    } else {
+      document.getElementById('loginBtn').textContent = 'Login';
+      document.getElementById('devLoginSection').style.display = 'block';
+      document.getElementById('devDashboard').style.display = 'none';
+    }
+  });
+
+  // Load all approved apps
+  window.loadApps = async function() {
+    try {
+      const db = window._db;
+      const q = query(collection(db, 'apps'), where('status', '==', 'approved'), orderBy('createdAt', 'desc'));
+      const snap = await getDocs(q);
+      window._allApps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderApps(window._allApps);
+      updateStats(window._allApps);
+      updateCatCounts(window._allApps);
+    } catch(e) {
+      // If index not ready, load without order
+      try {
+        const snap = await getDocs(query(collection(window._db, 'apps'), where('status', '==', 'approved')));
+        window._allApps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderApps(window._allApps);
+        updateStats(window._allApps);
+        updateCatCounts(window._allApps);
+      } catch(e2) {
+        document.getElementById('appGrid').innerHTML = `<div class="empty"><div class="empty-icon">📭</div><h3>No apps yet</h3><p>Be the first to submit an app!</p></div>`;
+      }
+    }
+  };
+
+  window.loadDevApps = async function(uid) {
+    const el = document.getElementById('devAppList');
+    el.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>';
+    try {
+      const snap = await getDocs(query(collection(window._db, 'apps'), where('devUid', '==', uid)));
+      const apps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (!apps.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><h3>No apps submitted yet</h3><p>Submit your first app!</p></div>'; return; }
+      el.innerHTML = apps.map(a => `
+        <div class="dev-app-row">
+          <div class="app-icon">${a.iconUrl ? `<img src="${a.iconUrl}" onerror="this.textContent='📱';this.style.fontSize='20px'">` : '📱'}</div>
+          <div class="dev-app-row-info"><h3>${a.name}</h3><p>${a.category} · ${a.platform?.join(', ') || ''}</p></div>
+          <span class="status-badge status-${a.status}">${a.status}</span>
+        </div>`).join('');
+    } catch(e) { el.innerHTML = '<div class="empty"><div class="empty-icon">⚠️</div><h3>Error loading apps</h3></div>'; }
+  };
+
+  window.submitApp = async function() {
+    const name = document.getElementById('appName').value.trim();
+    const devName = document.getElementById('devName').value.trim();
+    const email = document.getElementById('devEmail').value.trim();
+    const category = document.getElementById('appCategory').value;
+    const descEn = document.getElementById('appDescEn').value.trim();
+    const agree = document.getElementById('agreeCheck').checked;
+
+    if (!name || !devName || !email || !category || !descEn) { showToast('⚠️ Please fill all required fields'); return; }
+    if (!agree) { showToast('⚠️ Please agree to the terms'); return; }
+
+    const platforms = [...document.querySelectorAll('.plat-btn.selected')].map(b => b.textContent.trim().split(' ').slice(1).join(' '));
+    if (!platforms.length) { showToast('⚠️ Select at least one platform'); return; }
+
+    const submitBtn = document.querySelector('#submitForm .btn-primary');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+
+    try {
+      const { collection, addDoc, serverTimestamp } = window._firebase;
+      await addDoc(collection(window._db, 'apps'), {
+        name,
+        devName,
+        devEmail: email,
+        devStudio: document.getElementById('devStudio').value.trim(),
+        category,
+        descEn,
+        descBn: document.getElementById('appDescBn').value.trim(),
+        platform: platforms,
+        iconUrl: document.getElementById('appIcon').value.trim(),
+        downloadLink: document.getElementById('appLink').value.trim(),
+        website: document.getElementById('appWebsite').value.trim(),
+        status: 'pending',
+        rating: 0,
+        downloads: 0,
+        devUid: window._auth.currentUser?.uid || null,
+        createdAt: serverTimestamp()
+      });
+      document.getElementById('submitForm').style.display = 'none';
+      document.getElementById('submitSuccess').style.display = 'block';
+    } catch(e) {
+      showToast('❌ Submission failed. Try again.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit App →';
+    }
+  };
+
+  window.loginDev = async function() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPassword').value;
+    if (!email || !pass) { showToast('⚠️ Enter email and password'); return; }
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+      showToast('✅ Logged in!');
+    } catch(e) { showToast('❌ Login failed: ' + e.message); }
+  };
+
+  window.registerDev = async function() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass = document.getElementById('loginPassword').value;
+    if (!email || !pass) { showToast('⚠️ Enter email and password'); return; }
+    if (pass.length < 6) { showToast('⚠️ Password must be 6+ characters'); return; }
+    try {
+      await createUserWithEmailAndPassword(auth, email, pass);
+      showToast('✅ Account created!');
+    } catch(e) { showToast('❌ ' + e.message); }
+  };
+
+  window.logoutDev = async function() {
+    await signOut(auth);
+    showToast('Logged out');
+  };
+
+  window.incrementDownload = async function(appId) {
+    const { doc, updateDoc, increment } = window._firebase;
+    await updateDoc(doc(window._db, 'apps', appId), { downloads: increment(1) });
+  };
+
+  loadApps();
+</script>
+
+<script>
+  let currentCat = 'all';
+  let currentSort = 'newest';
+
+  function showPage(p) {
+    document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+    document.getElementById('page-' + p).classList.add('active');
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    const navEl = document.getElementById('nav-' + (p === 'home' ? 'home' : p === 'submit' ? 'submit' : 'dev'));
+    if (navEl) navEl.classList.add('active');
+    window.scrollTo(0, 0);
+    return false;
+  }
+
+  function renderApps(apps) {
+    const grid = document.getElementById('appGrid');
+    if (!apps.length) {
+      grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">🔍</div><h3>No apps found</h3><p>Try a different search or category.</p></div>`;
+      return;
+    }
+    grid.innerHTML = apps.map(a => `
+      <div class="app-card" onclick="openModal('${a.id}')">
+        <div class="app-card-top">
+          <div class="app-icon">${a.iconUrl ? `<img src="${a.iconUrl}" onerror="this.outerHTML='<span style=font-size:24px>📱</span>'">` : '📱'}</div>
+          <div class="app-info">
+            <div class="app-name">${escHtml(a.name)}</div>
+            <div class="app-dev">${escHtml(a.devStudio || a.devName || '')}</div>
+            <div class="app-badges">
+              <span class="badge badge-green">${escHtml(a.category)}</span>
+              ${(a.platform||[]).map(p => `<span class="badge badge-gray">${escHtml(p)}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div class="app-desc">${escHtml(a.descEn || '')}</div>
+        <div class="app-footer">
+          <div class="app-rating"><span class="stars">★</span> ${a.rating || '0.0'} · ${fmtNum(a.downloads || 0)} dl</div>
+          <button class="app-dl-btn" onclick="event.stopPropagation();openModal('${a.id}')">Get App ↓</button>
+        </div>
+      </div>`).join('');
+  }
+
+  function updateStats(apps) {
+    document.getElementById('stat-apps').textContent = apps.length;
+    const devs = new Set(apps.map(a => a.devEmail)).size;
+    document.getElementById('stat-devs').textContent = devs;
+    const dl = apps.reduce((s, a) => s + (a.downloads || 0), 0);
+    document.getElementById('stat-downloads').textContent = fmtNum(dl);
+  }
+
+  function updateCatCounts(apps) {
+    const counts = {};
+    apps.forEach(a => { counts[a.category] = (counts[a.category] || 0) + 1; });
+    document.getElementById('cc-all').textContent = apps.length;
+    ['Education','E-commerce','Finance','Health','News','Entertainment','Utility','Other'].forEach(c => {
+      const el = document.getElementById('cc-' + c);
+      if (el) el.textContent = counts[c] || 0;
+    });
+  }
+
+  function filterCat(cat, el) {
+    currentCat = cat;
+    document.querySelectorAll('.cat-list a').forEach(a => a.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('contentTitle').textContent = cat === 'all' ? 'All Apps' : cat;
+    applyFilters();
+    return false;
+  }
+
+  function sortApps(val) {
+    currentSort = val;
+    applyFilters();
+  }
+
+  function handleSearch(val) {
+    applyFilters(val);
+  }
+
+  function applyFilters(searchVal) {
+    const q = (searchVal !== undefined ? searchVal : document.getElementById('searchInput').value).toLowerCase();
+    let apps = window._allApps || [];
+    if (currentCat !== 'all') apps = apps.filter(a => a.category === currentCat);
+    if (q) apps = apps.filter(a => (a.name + ' ' + a.descEn + ' ' + a.devName).toLowerCase().includes(q));
+    if (currentSort === 'rating') apps = [...apps].sort((a,b) => (b.rating||0)-(a.rating||0));
+    else if (currentSort === 'downloads') apps = [...apps].sort((a,b) => (b.downloads||0)-(a.downloads||0));
+    else if (currentSort === 'name') apps = [...apps].sort((a,b) => a.name.localeCompare(b.name));
+    renderApps(apps);
+  }
+
+  function openModal(id) {
+    const a = (window._allApps || []).find(x => x.id === id);
+    if (!a) return;
+    document.getElementById('modalIcon').innerHTML = a.iconUrl ? `<img src="${a.iconUrl}" onerror="this.outerHTML='📱'">` : '📱';
+    document.getElementById('modalName').textContent = a.name;
+    document.getElementById('modalDev').textContent = a.devStudio || a.devName || '';
+    document.getElementById('modalBadges').innerHTML = `<span class="badge badge-green">${escHtml(a.category)}</span> ${(a.platform||[]).map(p=>`<span class="badge badge-gray">${escHtml(p)}</span>`).join(' ')}`;
+    document.getElementById('modalDesc').textContent = a.descEn + (a.descBn ? '\n\n' + a.descBn : '');
+    document.getElementById('modalRating').textContent = '★ ' + (a.rating || '0.0');
+    document.getElementById('modalDownloads').textContent = fmtNum(a.downloads || 0);
+    document.getElementById('modalCat').textContent = a.category;
+    let btns = '';
+    if (a.downloadLink) btns += `<button class="modal-dl-btn" onclick="handleDownload('${id}','${escAttr(a.downloadLink)}')">⬇ Download / Get App</button>`;
+    if (a.website) btns += `<button class="modal-dl-btn red" onclick="window.open('${escAttr(a.website)}','_blank')">🌐 Website</button>`;
+    document.getElementById('modalActions').innerHTML = btns || '<p style="font-size:13px;color:var(--text2)">No download link provided.</p>';
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function handleDownload(id, url) {
+    window.open(url, '_blank');
+    if (window.incrementDownload) window.incrementDownload(id);
+  }
+
+  function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) closeModalDirect(); }
+  function closeModalDirect() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+  function togglePlatform(btn) { btn.classList.toggle('selected'); }
+
+  let activeLinkType = 'play';
+  function selectLinkType(type) {
+    activeLinkType = type;
+    ['play','drive','manual'].forEach(t => document.getElementById('lt-'+t).classList.toggle('selected', t===type));
+    const labels = { play: 'Google Play Store URL', drive: 'Google Drive Link (APK or ZIP)', manual: 'Direct Download URL' };
+    const placeholders = { play: 'https://play.google.com/store/apps/details?id=...', drive: 'https://drive.google.com/file/d/...', manual: 'https://example.com/myapp.apk' };
+    document.getElementById('linkLabel').textContent = labels[type];
+    document.getElementById('appLink').placeholder = placeholders[type];
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function escAttr(s) { return String(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;'); }
+  function fmtNum(n) { return n >= 1000 ? (n/1000).toFixed(1)+'K' : n; }
+</script>
+</body>
+</html>
